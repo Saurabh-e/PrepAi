@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
-const swaggerUi = require('swagger-ui-express');
 const errorHandler = require('./middlewares/error.middleware');
 
 // Load environment variables from .env
@@ -10,13 +9,7 @@ dotenv.config();
 
 const app = express();
 
-// Parse Swagger JSON safely
-let swaggerDocument = {};
-try {
-  swaggerDocument = require('../swagger.json');
-} catch (e) {
-  console.warn('Could not load swagger.json. API documentation will not be served.');
-}
+
 
 // CORS Configuration
 const allowedOrigins = process.env.CORS_ALLOWED_ORIGIN_PATTERNS
@@ -60,11 +53,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev')); // Console logging
 
-// Serve Swagger UI
-if (Object.keys(swaggerDocument).length > 0) {
-  app.use('/swagger-ui.html', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-  app.get('/api-docs', (req, res) => res.json(swaggerDocument));
-}
+
 
 // Route Imports
 const authRoutes = require('./routes/auth.routes');
