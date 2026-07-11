@@ -12,14 +12,18 @@ const app = express();
 
 
 // CORS Configuration
-const allowedOrigins = process.env.CORS_ALLOWED_ORIGIN_PATTERNS
+const userOrigins = process.env.CORS_ALLOWED_ORIGIN_PATTERNS
   ? process.env.CORS_ALLOWED_ORIGIN_PATTERNS.split(',').map(p => p.trim().replace(/^['"]|['"]$/g, ''))
-  : [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'https://*.vercel.app',
-      'https://*.onrender.com'
-    ];
+  : [];
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://*.vercel.app',
+  'https://*.onrender.com',
+  'https://prep-ai-git-main-saurabh-es-projects.vercel.app',
+  ...userOrigins
+];
 
 const allowAll = allowedOrigins.includes('*');
 
