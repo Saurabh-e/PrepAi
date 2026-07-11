@@ -71,18 +71,18 @@ const compilerRoutes = require('./routes/compiler.routes');
 const fileRoutes = require('./routes/file.routes');
 
 // Mount Routes
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/resumes', resumeRoutes);
-app.use('/api/v1/interviews', interviewRoutes);
-app.use('/api/v1/dashboard', dashboardRoutes);
-app.use('/api/v1/notifications', notificationRoutes);
-app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/compiler', compilerRoutes);
-app.use('/api/v1/files', fileRoutes);
+app.use(['/api/v1/auth', '/api/api/v1/auth'], authRoutes);
+app.use(['/api/v1/users', '/api/api/v1/users'], userRoutes);
+app.use(['/api/v1/resumes', '/api/api/v1/resumes'], resumeRoutes);
+app.use(['/api/v1/interviews', '/api/api/v1/interviews'], interviewRoutes);
+app.use(['/api/v1/dashboard', '/api/api/v1/dashboard'], dashboardRoutes);
+app.use(['/api/v1/notifications', '/api/api/v1/notifications'], notificationRoutes);
+app.use(['/api/v1/admin', '/api/api/v1/admin'], adminRoutes);
+app.use(['/api/v1/compiler', '/api/api/v1/compiler'], compilerRoutes);
+app.use(['/api/v1/files', '/api/api/v1/files'], fileRoutes);
 
 // Actuator health check endpoint
-app.get('/actuator/health', (req, res) => {
+app.get(['/actuator/health', '/api/actuator/health'], (req, res) => {
   return res.json({ status: 'UP', details: { db: 'UP' } });
 });
 
