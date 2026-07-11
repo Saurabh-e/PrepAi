@@ -1,0 +1,221 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AI Interview Platform API Documentation",
+    "description": "Production-ready Node/Express backend API for AI Interview Platform with Groq AI integration",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Base API Path"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "phone": { "type": "string" }
+                },
+                "required": ["email", "password", "firstName", "lastName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Successfully registered" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Authenticate user and return tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Successfully authenticated" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Refresh access token",
+        "parameters": [
+          {
+            "name": "refreshToken",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Token refreshed successfully" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Log user out and invalidate refresh tokens",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Logged out successfully" }
+        }
+      }
+    },
+    "/users/profile": {
+      "get": {
+        "tags": ["User Management"],
+        "summary": "Get authenticated user profile details",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Profile details retrieved" }
+        }
+      },
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Update user profile metrics",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "skills": { "type": "array", "items": { "type": "string" } },
+                  "experience": {
+                    "type": "object",
+                    "properties": {
+                      "currentRole": { "type": "string" },
+                      "company": { "type": "string" },
+                      "yearsOfExperience": { "type": "integer" },
+                      "education": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Profile updated successfully" }
+        }
+      }
+    },
+    "/resumes/upload": {
+      "post": {
+        "tags": ["Resume Operations"],
+        "summary": "Upload and parse resume file (PDF/DOCX)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Uploaded and analyzed successfully" }
+        }
+      }
+    },
+    "/interviews/start": {
+      "post": {
+        "tags": ["Interview Execution"],
+        "summary": "Start a new interview session",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobRole": { "type": "string" },
+                  "domain": { "type": "string", "enum": ["JAVA", "SPRING_BOOT", "MERN", "DSA", "HR", "SQL", "JAVASCRIPT", "CODEFORCES"] },
+                  "difficulty": { "type": "string", "enum": ["EASY", "MEDIUM", "HARD"] },
+                  "numberOfQuestions": { "type": "integer", "minimum": 1, "maximum": 20 }
+                },
+                "required": ["jobRole", "domain", "difficulty", "numberOfQuestions"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Interview session started successfully" }
+        }
+      }
+    },
+    "/compiler/run": {
+      "post": {
+        "tags": ["Compiler Execution"],
+        "summary": "Compile and run candidate C++ source code",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceCode": { "type": "string" },
+                  "input": { "type": "string" }
+                },
+                "required": ["sourceCode"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Code compiled and executed successfully" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
