@@ -20,13 +20,20 @@ try {
 
 // CORS Configuration
 const allowedOrigins = process.env.CORS_ALLOWED_ORIGIN_PATTERNS
-  ? process.env.CORS_ALLOWED_ORIGIN_PATTERNS.split(',')
-  : ['http://localhost:3000', 'http://localhost:5173', 'https://*.vercel.app'];
+  ? process.env.CORS_ALLOWED_ORIGIN_PATTERNS.split(',').map(p => p.trim().replace(/^['"]|['"]$/g, ''))
+  : [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'https://*.vercel.app',
+      'https://*.onrender.com'
+    ];
+
+const allowAll = allowedOrigins.includes('*');
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, postman)
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (like mobile apps, curl, postman) or if wildcard * is allowed
+    if (!origin || allowAll) return callback(null, true);
     
     // Check wildcard match (e.g. https://*.vercel.app)
     const isAllowed = allowedOrigins.some(pattern => {
@@ -41,8 +48,8 @@ app.use(cors({
     if (isAllowed) {
       callback(null, true);
     } else {
-      console.warn(`Origin block by CORS: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
+      console.warn(`Origin blocked by CORS: ${origin}`);
+      callback(new Error(`Origin ${origin} is not allowed by CORS`));
     }
   },
   credentials: true
